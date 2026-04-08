@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rogo for ACT Capital Advisors</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: rgba(253, 253, 252, 1);
+  --bg-secondary: rgba(250, 250, 249, 1);
+  --bg-tertiary: rgba(245, 245, 244, 1);
+  --bg-quaternary: rgba(238, 237, 236, 1);
+  --surface: rgba(255, 255, 255, 1);
+  --text-primary: rgba(28, 25, 23, 1);
+  --text-secondary: rgba(68, 64, 60, 1);
+  --text-tertiary: rgba(120, 113, 108, 1);
+  --text-quaternary: rgba(168, 162, 158, 1);
+  --border-primary: rgba(12, 10, 9, 0.1);
+  --border-primary-solid: rgba(231, 229, 228, 1);
+  --border-secondary-solid: rgba(214, 211, 209, 1);
+  --brand-primary: rgba(19, 91, 68, 1);
+  --brand-primary-hover: rgba(29, 117, 89, 1);
+  --brand-secondary: rgba(13, 143, 101, 0.2);
+  --brand-secondary-solid: rgba(207, 233, 224, 1);
+  --brand-foreground: rgba(245, 245, 244, 1);
+  --surface-inverted: rgba(41, 37, 36, 1);
+  --text-primary-inverted: rgba(250, 250, 249, 1);
+  --text-secondary-inverted: rgba(214, 211, 209, 1);
+  --chart-1: rgb(27, 140, 108);
+  --chart-2: rgb(83, 167, 210);
+  --chart-3: rgb(253, 161, 100);
+  --chart-4: rgb(60, 102, 126);
+  --chart-5: rgb(158, 120, 143);
+  --shadow-sm: 0 1px 1px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.03);
+  --shadow-md: 0 2px 6px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  padding: 40px 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-primary-solid);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.6875rem; font-weight: 600;
+  height: 22px; padding: 0 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.badge-brand { background: var(--brand-secondary); color: var(--brand-primary); }
+.badge-muted { background: var(--bg-tertiary); color: var(--text-secondary); }
+.badge-blue { background: rgba(83,167,210,0.15); color: #1e5f83; }
+
+/* Header */
+.header { margin-bottom: 40px; }
+.header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+.header-sub { font-size: 0.9375rem; color: var(--text-secondary); line-height: 1.6; max-width: 720px; }
+.header-badges { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+/* Section */
+.section { margin-bottom: 32px; }
+.section-title {
+  font-size: 0.6875rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-primary-solid);
+}
+
+/* Use case grid */
+.uc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 768px) { .uc-grid { grid-template-columns: 1fr; } }
+
+.uc-card {
+  background: var(--surface);
+  border: 1px solid var(--border-primary-solid);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.uc-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-secondary-solid);
+}
+.uc-card.expanded { grid-column: 1 / -1; }
+.uc-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.uc-title { font-size: 0.9375rem; font-weight: 600; }
+.uc-desc { font-size: 0.8125rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
+.uc-toggle {
+  width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+  color: var(--text-quaternary); transition: transform 0.2s;
+}
+.uc-card.open .uc-toggle { transform: rotate(180deg); }
+.uc-detail {
+  display: none;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-primary-solid);
+}
+.uc-card.open .uc-detail { display: block; }
+
+/* Example query block */
+.query-block {
+  background: var(--surface-inverted);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+.query-label {
+  font-size: 0.6875rem; font-weight: 600;
+  color: var(--text-secondary-inverted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+.query-text {
+  font-size: 0.8125rem;
+  color: var(--text-primary-inverted);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Bullet list */
+.detail-list { list-style: none; padding: 0; }
+.detail-list li {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  padding: 4px 0 4px 16px; position: relative; line-height: 1.5;
+}
+.detail-list li::before {
+  content: '';
+  position: absolute; left: 0; top: 11px;
+  width: 5px; height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--chart-1); opacity: 0.6;
+}
+.detail-list li strong { color: var(--text-primary); font-weight: 500; }
+
+/* Data sources strip */
+.ds-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+.ds-item {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+.ds-name { font-size: 0.8125rem; font-weight: 600; }
+.ds-sub { font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 2px; line-height: 1.4; }
+
+/* Proposal */
+.proposal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) { .proposal-grid { grid-template-columns: 1fr; } }
+.proposal-card {
+  border: 2px solid var(--border-primary-solid);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.proposal-card:hover { border-color: var(--brand-primary); }
+.proposal-card.recommended {
+  border-color: var(--brand-primary);
+  background: rgba(13, 143, 101, 0.03);
+}
+.proposal-tier {
+  font-size: 0.6875rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+.proposal-price {
+  font-size: 2rem; font-weight: 700; margin: 8px 0 4px;
+  font-variant-numeric: tabular-nums;
+}
+.proposal-period { font-size: 0.75rem; color: var(--text-tertiary); }
+.proposal-features {
+  list-style: none; padding: 0; margin-top: 16px; text-align: left;
+}
+.proposal-features li {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  padding: 6px 0; border-bottom: 1px solid var(--border-primary-solid);
+  display: flex; align-items: center; gap: 8px;
+}
+.proposal-features li:last-child { border-bottom: none; }
+.check-sm { color: var(--chart-1); flex-shrink: 0; }
+
+/* Workflow visual */
+.workflow {
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding-bottom: 8px;
+}
+.wf-step {
+  flex: 1; min-width: 130px;
+  text-align: center; padding: 16px 12px;
+  background: var(--bg-secondary);
+  position: relative;
+}
+.wf-step:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+.wf-step:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+.wf-step-num {
+  font-size: 0.6875rem; font-weight: 700;
+  color: var(--brand-primary); margin-bottom: 4px;
+}
+.wf-step-label { font-size: 0.75rem; font-weight: 600; }
+.wf-step-sub { font-size: 0.6875rem; color: var(--text-tertiary); margin-top: 2px; }
+.wf-arrow {
+  flex-shrink: 0; color: var(--text-quaternary);
+  margin: 0 -2px; z-index: 1;
+}
+
+/* Social proof */
+.proof-stat {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.proof-num {
+  font-size: 2rem; font-weight: 700; color: var(--brand-primary);
+  font-variant-numeric: tabular-nums;
+}
+.proof-label { font-size: 0.875rem; color: var(--text-secondary); }
+
+/* Tab system */
+.tab-nav {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border-primary-solid);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 8px 16px;
+  font-size: 0.8125rem; font-weight: 500;
+  color: var(--text-tertiary);
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text-secondary); }
+.tab-btn.active { color: var(--brand-primary); border-bottom-color: var(--brand-primary); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.divider { height: 1px; background: var(--border-primary-solid); margin: 32px 0; }
+
+.footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-quaternary);
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-primary-solid);
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <h1>Rogo for ACT Capital</h1>
+  </div>
+  <div class="header-sub">
+    AI-powered investment banking platform. Built by bankers. Tailored to your workflows. Everything below reflects real capabilities discussed and demonstrated across our conversations.
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-brand">Purpose-Built for IB</span>
+    <span class="badge badge-muted">50,000+ Active Bankers</span>
+    <span class="badge badge-muted">SOC 2 Type 2 Certified</span>
+    <span class="badge badge-blue">$200M+ Raised (Sequoia-led)</span>
+  </div>
+</div>
+
+<!-- Data Sources -->
+<div class="section">
+  <div class="section-title">Data Sources &mdash; Included Out of the Box, No Separate Subscriptions</div>
+  <div class="ds-strip">
+    <div class="ds-item">
+      <div class="ds-name">S&P Capital IQ</div>
+      <div class="ds-sub">Fundamentals, pricing, estimates, ownership, transactions</div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-name">PitchBook</div>
+      <div class="ds-sub">Company profiles, fund data, deal history, dry powder</div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-name">Crunchbase</div>
+      <div class="ds-sub">Funding rounds, investors, M&A activity</div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-name">SEC / Global Filings</div>
+      <div class="ds-sub">80+ exchanges, UK Companies House, Edgar</div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-name">Earnings Transcripts</div>
+      <div class="ds-sub">Full text, searchable, with citations</div>
+    </div>
+    <div class="ds-item">
+      <div class="ds-name">Your CRM & Files</div>
+      <div class="ds-sub">Salesforce, SharePoint, OneDrive, Google Drive</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="section">
+  <div class="tab-nav" id="mainTabs">
+    <button class="tab-btn active" data-tab="usecases">Core Use Cases</button>
+    <button class="tab-btn" data-tab="platform">Platform & Access</button>
+    <button class="tab-btn" data-tab="security">Security & Compliance</button>
+    <button class="tab-btn" data-tab="proposal">Evaluation Proposal</button>
+  </div>
+
+  <!-- USE CASES TAB -->
+  <div class="tab-panel active" id="tab-usecases">
+    <div class="uc-grid">
+
+      <!-- 1. Buyer's List -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Buyer's List Creation</div>
+            <div class="uc-desc">Generate tiered buyer lists with rationale, deal adjacencies, check sizes, and key contacts in minutes.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li><strong>200+ buyers</strong> generated in a single query, ranked by fit</li>
+            <li>Tiered output: financial sponsors, strategics, stretch acquirers</li>
+            <li>Each buyer includes <strong>rationale, thematic alignment, deal adjacencies, estimated check size, key partner to contact</strong></li>
+            <li>Sources cited inline from CapIQ, PitchBook, Crunchbase &mdash; hover any data point to see provenance</li>
+            <li>Exports directly to your branded Excel buyer's list format</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"Create a buyer's list of 200 potential acquirers for [client]. Include financial sponsors and strategic buyers. For each, show fund strategy, rationale, thematic alignment, deal adjacencies, check size, and key partner to reach out to."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Prospecting -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Deal Sourcing & Prospecting</div>
+            <div class="uc-desc">Screen thousands of companies against custom criteria to find warm leads and exit-ready targets.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Natural language screening across PitchBook, Crunchbase, and CapIQ databases simultaneously</li>
+            <li>Filter by <strong>geography, revenue range, industry, ownership status, founder tenure, institutional funding history</strong></li>
+            <li>5,400+ results returned in the example below &mdash; automatically ranked by exit potential</li>
+            <li>Output includes company name, state, ownership, founding date, industry, exit rationale</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"Screen for industrial technology and precision manufacturing companies in the Pacific Northwest with estimated revenues between $20M&ndash;$60M that have not raised institutional capital in the last 5 years, led by a founder with tenure greater than 10 years. Build a warm list of potential clients approaching an exit window."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Contact Discovery -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Contact Discovery</div>
+            <div class="uc-desc">Find business emails, phone numbers, and key decision-makers without a ZoomInfo subscription.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Scrapes company websites, cross-references CRM email patterns, tests first-initial/last-name combinations</li>
+            <li>Each contact includes a <strong>confidence score</strong> (e.g., 90% deliverability estimate)</li>
+            <li>Multi-step fallback: website &rarr; CRM pattern match &rarr; web search &rarr; best guess with rationale</li>
+            <li>Integrates directly into buyer's list output as an additional column</li>
+            <li>Can also integrate with ZoomInfo if your firm has a subscription</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"For each buyer on this list, find the best email contact for the most relevant partner or deal lead. Include a confidence score and source."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Strategic Buyer Intelligence -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Strategic Buyer Intelligence</div>
+            <div class="uc-desc">Mine earnings calls and investor presentations for acquisition appetite signals.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Search across the last N quarters of transcripts and presentations for any public company</li>
+            <li>Identify <strong>mentions of M&A strategy, inorganic growth appetite, target sector preferences</strong></li>
+            <li>Click any citation to see the exact quote, page, and source document</li>
+            <li>Synthesize into strategic alignment insights for your specific client profile</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"Analyze the last 4 earnings transcripts and investor presentations for Hormel Foods to identify mentions of secondary processing, value-add protein, and M&A appetite. Assess strategic alignment with ESG-certified private targets in North America."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Crypto & Blockchain Research -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Crypto & Blockchain M&A Research</div>
+            <div class="uc-desc">Purpose-built research for emerging sectors where traditional databases fall short.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Tiered buyer research for blockchain, DeFi, and digital asset companies</li>
+            <li>Deal log output: date, acquirer, target, deal value, status, sector focus</li>
+            <li>Token valuation frameworks (DCF-to-token, fee projection models)</li>
+            <li>Automatically generates branded PowerPoint and Excel deliverables</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"Build a crypto M&A buyer research report. Identify 25&ndash;40 potential acquirers across Tier 1 (lower mid-market blockchain/DeFi), Tier 2 (growth-stage digital asset firms), and Tier 3 (strategic TradFi players). Include a deal log of recent comparable transactions."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Valuation & Modeling -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Valuation & Financial Modeling</div>
+            <div class="uc-desc">DCFs, LBOs, precedent transaction comps &mdash; populated in your Excel templates in 15 minutes.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li><strong>Precedent transaction comps:</strong> pull comparable M&A transactions by industry, size, and deal type with valuation multiples</li>
+            <li><strong>LBO models:</strong> auto-populated with financials, learns from your prior LBO templates and fills in intricacies per deal</li>
+            <li><strong>DCF models:</strong> complete with WACC, terminal value, sensitivity tables</li>
+            <li><strong>3&ndash;4 hour valuation workflow compressed to ~15 minutes</strong> for a first draft</li>
+            <li>References your firm's prior models via the Skills system &mdash; each new model compounds on the last</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"Build a valuation for [client] using precedent transactions in the food manufacturing space with deal size between $50M&ndash;$200M. Pull comparable EBITDA multiples. Create a one-page valuation summary in our standard format with key assumptions."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. SIM & Pitch Decks -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">SIM Drafts & Pitch Decks</div>
+            <div class="uc-desc">Generate branded deliverables &mdash; CIMs, pitch books, market overviews &mdash; in your firm's exact format.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Pre-loaded with ACT Capital's PowerPoint templates, logos, fonts, and formatting standards</li>
+            <li>First-draft SIM/CIM with company overview, market analysis, financial summary, growth drivers</li>
+            <li>Pitch decks with valuation, precedent transactions, and proposed engagement terms</li>
+            <li>Market overviews, training materials, one-pagers &mdash; all in your branded format</li>
+            <li><strong>Rogo gets you 80% there</strong> &mdash; your team adds the last-mile strategic thinking and business judgment</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"Draft a SIM for [client], a $30M revenue specialty food manufacturer. Include executive summary, company overview, industry landscape, financial performance, and growth opportunities. Use our standard SIM template."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. CRM & Meeting Prep -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">CRM Intelligence & Meeting Prep</div>
+            <div class="uc-desc">Query Salesforce in plain English. Auto-generate dashboards and prep materials before any call.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Natural language queries over your Salesforce CRM &mdash; no SOQL knowledge needed</li>
+            <li>Auto-generate meeting prep dashboards: investment strategy, CRM notes, recent activity, contact history</li>
+            <li>Cross-reference CRM contacts with PitchBook/Crunchbase data for richer context</li>
+            <li>Schedule recurring reports: "Every Monday, pull pipeline updates and email me a summary"</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Query</div>
+            <div class="query-text">"I'm meeting with XYZ Capital tomorrow. Pull their account from Salesforce, show me their investment strategy, all CRM notes from the last 6 months, and any deals we've discussed. Create a one-page prep dashboard."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Email Agent -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Email Agent (Felix)</div>
+            <div class="uc-desc">Email a request to Rogo from Outlook. Get a finished deliverable back in your inbox &mdash; no login required.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li><strong>Zero friction for MDs:</strong> just email Felix like you'd email an analyst</li>
+            <li>Attach documents, paste instructions &mdash; get back Excel, PowerPoint, PDF deliverables</li>
+            <li>Ideal for managing directors who don't want to learn a new platform</li>
+            <li>Same quality, sourcing, and branding as the web platform</li>
+          </ul>
+          <div class="query-block">
+            <div class="query-label">Example Email to Felix</div>
+            <div class="query-text">"I'm meeting with a $25M revenue industrial services company next Tuesday. I need a one-page valuation summary with 5 precedent transactions, a market overview slide, and a draft pitch deck. Attach to this email as PowerPoint."</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Legal / Redlining -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Document Redlining & Legal Review</div>
+            <div class="uc-desc">Learn your firm's style, proactively redline engagement letters, NDAs, and deal docs.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Upload previously redlined documents &mdash; Rogo learns your patterns and preferences</li>
+            <li>Proactively flags issues in new documents based on your historical redlines</li>
+            <li>Supports engagement letters, NDAs, purchase agreements, and other deal documents</li>
+            <li>Gets you 80% there &mdash; your GC handles the final review and judgment calls</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 11. Institutional Memory -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Institutional Memory & Skills</div>
+            <div class="uc-desc">Every workflow compounds. New hires onboard to ACT's playbook, not tribal knowledge.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li><strong>Skills system:</strong> save any successful workflow as a reusable skill (buyer's list, LBO, SIM draft)</li>
+            <li><strong>Three levels of memory:</strong> user-level (personal), group-level (deal team), firm-level (all of ACT)</li>
+            <li>When someone leaves, their workflows stay &mdash; institutional knowledge is preserved</li>
+            <li>New analysts onboard to a library of proven processes, not a blank slate</li>
+            <li>Admin dashboard shows all sessions, skills, and usage across the firm</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 12. Admin & Analytics -->
+      <div class="uc-card" onclick="toggleCard(this)">
+        <div class="uc-header">
+          <div>
+            <div class="uc-title">Admin Dashboard & Usage Analytics</div>
+            <div class="uc-desc">See who's using Rogo, how, and the sophistication of their queries &mdash; firm-wide.</div>
+          </div>
+          <svg class="uc-toggle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="uc-detail">
+          <ul class="detail-list">
+            <li>Real-time view of all team sessions, agents triggered, and deliverables created</li>
+            <li>Usage reports by user: frequency, query sophistication, value extraction score</li>
+            <li>Identify power users vs. underutilizers to optimize license allocation</li>
+            <li>Bi-weekly reports delivered to leadership during evaluation period</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PLATFORM TAB -->
+  <div class="tab-panel" id="tab-platform">
+    <div style="margin-bottom: 24px;">
+      <div style="font-size: 0.9375rem; font-weight: 600; margin-bottom: 12px;">Access Rogo Wherever You Work</div>
+      <div class="workflow">
+        <div class="wf-step">
+          <div class="wf-step-num">01</div>
+          <div class="wf-step-label">Web App</div>
+          <div class="wf-step-sub">Full platform &mdash; research, model, create</div>
+        </div>
+        <svg class="wf-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        <div class="wf-step">
+          <div class="wf-step-num">02</div>
+          <div class="wf-step-label">Email Agent</div>
+          <div class="wf-step-sub">Email Felix from Outlook &mdash; get deliverables back</div>
+        </div>
+        <svg class="wf-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        <div class="wf-step">
+          <div class="wf-step-num">03</div>
+          <div class="wf-step-label">Excel Plugin</div>
+          <div class="wf-step-sub">Copilot inside your models</div>
+        </div>
+        <svg class="wf-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        <div class="wf-step">
+          <div class="wf-step-num">04</div>
+          <div class="wf-step-label">Mobile App</div>
+          <div class="wf-step-sub">Research on the go</div>
+        </div>
+        <svg class="wf-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        <div class="wf-step">
+          <div class="wf-step-num">05</div>
+          <div class="wf-step-label">Teams / Outlook</div>
+          <div class="wf-step-sub">Native Microsoft 365 integration</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="uc-grid">
+      <div class="card">
+        <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: 12px;">Multi-Model Architecture</div>
+        <ul class="detail-list">
+          <li><strong>OpenAI</strong> &mdash; planning, task decomposition, workflow orchestration</li>
+          <li><strong>Anthropic (Claude)</strong> &mdash; data gathering, research synthesis, accuracy-critical tasks</li>
+          <li><strong>Google (Gemini)</strong> &mdash; visual design review, slide critique, layout optimization</li>
+          <li>Models are plug-and-play &mdash; as new models launch, Rogo runs evals and swaps in the best performer for each task</li>
+          <li>Enterprise subscription to all three &mdash; no per-token billing, no usage caps</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: 12px;">Deliverable Formats</div>
+        <ul class="detail-list">
+          <li><strong>PowerPoint</strong> &mdash; branded decks, pitch books, SIMs, training materials</li>
+          <li><strong>Excel</strong> &mdash; financial models, comp tables, buyer lists, screening outputs</li>
+          <li><strong>Word / PDF</strong> &mdash; memos, one-pagers, research reports</li>
+          <li><strong>Interactive dashboards</strong> &mdash; visual summaries, meeting prep, CRM views</li>
+          <li>All output uses your firm's templates, logos, and formatting standards</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECURITY TAB -->
+  <div class="tab-panel" id="tab-security">
+    <div class="uc-grid">
+      <div class="card">
+        <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: 12px;">Certifications & Controls</div>
+        <ul class="detail-list">
+          <li><strong>SOC 2 Type 1 & Type 2</strong> &mdash; independently audited</li>
+          <li><strong>ISO controls</strong> on AI governance and data governance</li>
+          <li><strong>Single-tenant VPC</strong> option &mdash; your data never leaves your environment</li>
+          <li>Data encrypted in transit and at rest</li>
+          <li>Fine-grained access controls and admin tooling</li>
+          <li>Built to FINRA-grade compliance standards</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: 12px;">Data Privacy</div>
+        <ul class="detail-list">
+          <li><strong>Your data is never used to train models</strong> &mdash; inputs and outputs stay private</li>
+          <li>No data shared between customers</li>
+          <li>Security architecture built by team from JPMorgan and Goldman Sachs</li>
+          <li>Same security posture used by every bulge bracket on the street</li>
+          <li>Full audit trail for every query and deliverable</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top: 16px; padding: 16px; background: rgba(13,143,101,0.06); border-radius: var(--radius-lg); font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.6;">
+      <strong>Why this matters for ACT:</strong> As a newly licensed federal broker-dealer, the compliance bar for any platform handling deal data is significantly higher than it was six months ago. Consumer LLMs (ChatGPT, Claude, Gemini) do not carry SOC 2, ISO, or FINRA-grade certifications. Using them for client-sensitive deal work exposes the firm to regulatory risk that Rogo eliminates by design.
+    </div>
+  </div>
+
+  <!-- PROPOSAL TAB -->
+  <div class="tab-panel" id="tab-proposal">
+    <div style="font-size: 0.9375rem; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6;">
+      Two options to get started. Both include full onboarding, template injection, 1:1 sessions with every user, and bi-weekly usage reports during the evaluation period.
+    </div>
+    <div class="proposal-grid">
+      <div class="proposal-card">
+        <div class="proposal-tier">Option A</div>
+        <div class="proposal-price">$37,500</div>
+        <div class="proposal-period">per year (5 seats at $7,500/seat)</div>
+        <ul class="proposal-features">
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 5 paid licenses</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 20 users get full access for 1 month evaluation</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Full onboarding &mdash; every user treated as paid</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 1:1 sessions with each senior user</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom template injection (buyer lists, SIMs, models)</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Bi-weekly usage reports with sophistication scoring</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Expand from 5 &rarr; 10 &rarr; 20+ based on adoption</li>
+        </ul>
+      </div>
+      <div class="proposal-card recommended">
+        <div class="proposal-tier" style="color: var(--brand-primary);">Option B &mdash; Recommended</div>
+        <div class="proposal-price">$75,000</div>
+        <div class="proposal-period">per year (10 seats at $7,500/seat)</div>
+        <ul class="proposal-features">
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 10 paid licenses</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>All ~40 users</strong> get full access for 1 month evaluation</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Full onboarding &mdash; every user treated as paid</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 1:1 sessions with each senior user</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Custom template injection (buyer lists, SIMs, models)</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Bi-weekly usage reports with sophistication scoring</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Firm-wide adoption data &mdash; see true demand before committing</li>
+          <li><svg class="check-sm" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> <strong>No usage caps</strong> &mdash; unlimited queries, models, and deliverables</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <div class="card" style="background: var(--bg-secondary); border: none;">
+        <div style="font-size: 0.875rem; font-weight: 600; margin-bottom: 8px;">What's Included in Every Seat</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8125rem; color: var(--text-secondary);">
+          <div>&#10003; All data sources (CapIQ, PitchBook, Crunchbase)</div>
+          <div>&#10003; Enterprise access to OpenAI, Anthropic, Gemini</div>
+          <div>&#10003; Custom template &amp; workflow injection</div>
+          <div>&#10003; Dedicated former-banker deployment team</div>
+          <div>&#10003; 1:1 onboarding &amp; ongoing office hours</div>
+          <div>&#10003; Email agent, Excel plugin, mobile app</div>
+          <div>&#10003; SOC 2, ISO, FINRA-grade security</div>
+          <div>&#10003; Unlimited usage &mdash; no throttling</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Prepared for ACT Capital Advisors &mdash; April 2026<br>
+  Rogo Technologies, Inc. &mdash; New York | San Francisco | London | Singapore
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Card toggle
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+</script>
+</body>
+</html>
